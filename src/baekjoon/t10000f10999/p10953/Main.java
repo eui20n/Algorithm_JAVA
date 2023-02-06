@@ -8,7 +8,7 @@
  * 제출할 때, package 삭제할 것
  * */
 
-package baekjoon.t10000f11000.p10953;
+package baekjoon.t10000f10999.p10953;
 
 import java.io.BufferedReader;
 import java.io.IOException;
