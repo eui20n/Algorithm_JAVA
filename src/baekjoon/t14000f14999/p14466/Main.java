@@ -6,22 +6,23 @@
  * 핵심 로직 및 생각 :
  * 소요 시간 :
  * 제출할 때, package 삭제할 것
- * */
+ */
 
 package baekjoon.t14000f14999.p14466;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class Main {
     static int N, K, R;
     static int[][] info;
     static int[][] cows;
-    static int[][] road;
     static int[][] farm;
-
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,55 +33,36 @@ public class Main {
 
         info = new int[R][4];
         cows = new int[K][2];
-        road = new int[N][N];
-        farm = new int[N][N];
 
         for (int i = 0; i < R; i++){
-            info[i] = Arrays.stream(br.readLine().split(" "))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            for (int j = 0; j < info[i].length; j++){
-                int x1, x2, y1, y2;
-                x1 = info[i][0] - 1;
-                y1 = info[i][1] - 1;
-                x2 = info[i][2] - 1;
-                y2 = info[i][3] - 1;
+            String[] tmpInput2 = br.readLine().split(" ");
+            int x1 = Integer.parseInt(tmpInput2[0]);
+            int y1 = Integer.parseInt(tmpInput2[1]);
+            int x2 = Integer.parseInt(tmpInput2[2]);
+            int y2 = Integer.parseInt(tmpInput2[3]);
 
-                road[x1][y1] = 1;
-                road[x2][y2] = 1;
-            }
+            info[i][0] = x1 - 1;
+            info[i][1] = y1 - 1;
+            info[i][2] = x2 - 1;
+            info[i][3] = y2 - 1;
+
         }
-        showArr(road);
-        int cnt = 1;
+
         for (int i = 0; i < K; i++){
-            cows[i] = Arrays.stream(br.readLine().split(" "))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            int x1, y1;
+            String[] tmpInput3 = br.readLine().split(" ");
+            int x = Integer.parseInt(tmpInput3[0]);
+            int y = Integer.parseInt(tmpInput3[1]);
 
-            x1 = cows[i][0] - 1;
-            y1 = cows[i][1] - 1;
-            farm[x1][y1] = cnt++;
+            cows[i][0] = x - 1;
+            cows[i][1] = y - 1;
         }
+
     }
 
     static void check(){
-        // 소의 위치 별로 bfs 함수 돌리기
+
     }
 
-    static void bfs(int x, int y){
-        // 소의 위치별로 달라지니 visited도 계속 바껴야함
-    }
-
-    static void showArr(int[][] arr){
-        for (int i = 0; i < arr.length; i++){
-            for (int j = 0; j < arr[i].length; j++){
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
 }
 
 // 생각 1. 소가 길이 있는 곳은 못감 => 길이 없는 곳으로만 해서 갈 수 있는지 확인
@@ -89,3 +71,11 @@ public class Main {
 // 생각 2. 길이 없는 곳으로 못가는데, 각각의 길은 서로 독립임 => 길의 여부를 비트 마스킹을 하던, 3차워 배열을 만들어서 하든 해야함 X
 // 길이 아닌 곳에서 길로 가는 것이 되는지 확인해야함 => 문제를 읽어보면 문제는 없어보임
 // 길인 곳에서 길인 곳으로 가는 것이 안되는 것
+
+// 배열을 그리지 말고 한번에 하기
+// 길을 갈 수 있는지만 검증 해주면 됨
+
+// 정리
+// (길, 깉) => 갈 수 없음
+// (길, 길X) => 갈 수 있음
+// (길X, 길) => 갈 수 있음
