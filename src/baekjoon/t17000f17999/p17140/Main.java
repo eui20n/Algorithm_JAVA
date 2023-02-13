@@ -24,7 +24,8 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static int[][] arr = new int[3][3];
+//    static int[][] arr = new int[3][3];
+    static int[][] arr = new int[100][100];
     static int r, c, k;
 
     public static void main(String[] args) throws IOException {
@@ -36,27 +37,52 @@ public class Main {
         k = tmpArr[2];
 
         for (int i = 0; i < 3; i++){
-            arr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+//            arr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            int[] tmpArr2 = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            for (int j = 0; j < tmpArr2.length; j++){
+                arr[i][j] = tmpArr2[j];
+            }
         }
 
-        RSort();
-//        operation();
+//        int[][] tmp = RSort();
+        System.out.println(operation());
+//        int[][] tmp = rotate(arr);
+//        for (int i = 0; i < tmp.length; i++){
+//            for (int j = 0; j < tmp[0].length; j++){
+//                System.out.print(tmp[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
     }
 
-    static void operation(){
-        int RLength = arr.length;
-        int CLength = arr[0].length;
+    static int operation(){
+        int time = 0;
+        while (true) {
+            if (time >= 100){
+                return -1;
+            }
 
-        if (RLength >= CLength){
-            RSort();
-        } else if (CLength > RLength){
-            CSort();
+            if (arr[r][c] == k){
+                return time;
+            }
+
+            int RLength = arr.length;
+            int CLength = arr[0].length;
+
+            if (RLength >= CLength) {
+                arr = RSort();
+            } else if (CLength > RLength) {
+                arr = CSort();
+            }
+            time++;
         }
     }
 
-    static void RSort(){
+    static int[][] RSort(){
+        int[][] newArr = new int[100][100];
+        int row = 0;
+
         for (int i = 0; i < arr.length; i++){
-            List<Integer> newList = new ArrayList<>();
             int[] tmpArr = arr[i];
             int[][] tmp = elementCount(tmpArr);
 
@@ -64,25 +90,50 @@ public class Main {
                 return o1[0] == o2[0] ? o1[0] - o2[0] : o1[1] - o2[1];
 //                return o1[0] == o2[0] ? o1[1] - o2[1] : o1[0] - o2[0];
             });
-
-            for (int[] tmpR : tmp){
+            // [1, 2] [2, 3] => [1, 2, 2, 3] 으로 바꾸는 과정
+            int col = 0;
+            stop : for (int[] tmpR : tmp){
                 for (int tmpC : tmpR){
-                    newList.add(tmpC);
+                    if (col >= 100){
+                        break stop;
+                    }
+                    newArr[row][col++] = tmpC;
                 }
             }
-
-            System.out.println(Arrays.toString(newList.toArray()));
-
-
+            row++;
         }
+        return newArr;
     }
 
-    static void CSort(){
+    static int[][] CSort(){
+        rotate(arr);
+        RSort();
 
+        int[][] newArr = new int[100][100];
+
+        for (int i = 0; i < 100; i++){
+            for (int j = 0; j < 100; j++){
+                newArr[i][j] = arr[i][99 - j];
+            }
+        }
+        rotate(newArr);
+        rotate(newArr);
+        rotate(newArr);
+        return newArr;
     }
 
-    static void rotate(int[] arr){
+    static int[][] rotate(int[][] arr){
+        int n = arr.length;
+        int m = arr[0].length;
 
+        int[][] rotateArr = new int[m][n];
+
+        for (int i = 0; i < m; i++){
+            for (int j = 0; j < n; j++){
+                rotateArr[i][j] = arr[n - 1 - j][i];
+            }
+        }
+        return rotateArr;
     }
 
     static int[][] elementCount(int[] arr){
