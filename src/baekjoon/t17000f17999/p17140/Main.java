@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    //    static int[][] arr = new int[3][3];
     static int[][] arr = new int[100][100];
     static int r, c, k;
     static int[] arrLength = {3, 3};
@@ -38,7 +37,10 @@ public class Main {
         k = tmpArr[2];
 
         for (int i = 0; i < 3; i++) {
-            arr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            int[] tmp = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            for (int j = 0; j < tmp.length; j++) {
+                arr[i][j] = tmp[j];
+            }
         }
         System.out.println(operation());
     }
@@ -52,42 +54,6 @@ public class Main {
 
             int RLength = arrLength[0];
             int CLength = arrLength[1];
-
-            if (time == 1) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 2) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 3) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 4) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 5) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 6) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
-            if (time == 7) {
-                System.out.printf("행 길이 : %d, 열 길이 : %d %n", RLength, CLength);
-                showArr(arr);
-            }
-
 
             if (arr[r][c] == k) {
                 return time;
@@ -112,10 +78,9 @@ public class Main {
             int[][] tmp = elementCount(tmpArr);
 
             Arrays.sort(tmp, (o1, o2) -> {
-//                return o1[0] == o2[0] ? o1[0] - o2[0] : o1[1] - o2[1];
-                return o1[0] >= o2[0] ? o1[1] - o2[1] : o1[0] - o2[0];
-//                return o1[0] == o2[0] ? o1[1] - o2[1] : o1[0] - o2[0];
+                return o1[1] == o2[1] ? o1[0] - o2[0] : o1[1] - o2[1];
             });
+
             // [1, 2] [2, 3] => [1, 2, 2, 3] 으로 바꾸는 과정
             int col = 0;
             stop:
@@ -147,9 +112,7 @@ public class Main {
 
             int[][] tmp = elementCount(tmpArr);
             Arrays.sort(tmp, (o1, o2) -> {
-//                return o1[0] == o2[0] ? o1[0] - o2[0] : o1[1] - o2[1];
-                return o1[0] >= o2[0] ? o1[1] - o2[1] : o1[0] - o2[0];
-//                return o1[0] == o2[0] ? o1[1] - o2[1] : o1[0] - o2[0];
+                return o1[1] == o2[1] ? o1[0] - o2[0] : o1[1] - o2[1];
             });
             int row = 0;
             stop:
@@ -189,17 +152,6 @@ public class Main {
         for (int key : map.keySet()) {
             result[idx++] = new int[]{key, map.get(key)};
         }
-
         return result;
-    }
-
-    static void showArr(int[][] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 }
