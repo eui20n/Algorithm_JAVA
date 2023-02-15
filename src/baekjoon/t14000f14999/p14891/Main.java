@@ -6,7 +6,7 @@
  * 핵심 로직 및 생각 :
  * 소요 시간 :
  * 제출할 때, package 삭제할 것
- * */
+ */
 
 package baekjoon.t14000f14999.p14891;
 
@@ -17,6 +17,7 @@ import java.util.*;
 
 public class Main {
     static int K;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         List<Deque<Integer>> gear = new ArrayList<>();
@@ -26,25 +27,71 @@ public class Main {
         gear.add(makeGear(br.readLine().split(""))); // 4번 톱니바퀴
 
         K = Integer.parseInt(br.readLine());
-        for (int i = 0; i < K; i++){
+        for (int i = 0; i < K; i++) {
             int[] tmp = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
             int rotateGear = tmp[0] - 1;
             int dir = tmp[1];
 
-            int[] indexValue = getIndex(gear.get(rotateGear));
-            System.out.println(Arrays.toString(indexValue));
+            executeGear(gear, rotateGear, dir, -1);
+        }
+        int result = 0;
+        int idx = 0;
+        int[] resultArr = {1, 2, 4, 8};
+        for (Deque<Integer> data : gear) {
+            int peekData = data.peekFirst();
+            if (peekData == 1){
+                result += resultArr[idx];
+            }
+            idx += 1;
+        }
+        System.out.println(result);
+    }
+
+    static void executeGear(List<Deque<Integer>> gear, int rotateGear, int dir, int visited) {
+        // 움직여야 하는 위치의 톱니 바퀴를 먼저 움직임
+        // 양 옆에 톱니바퀴를 움직임
+        int[] d = {1, -1}; // 오른쪽 왼쪽
+
+        // 움직여야 하는 기어 움직이기
+        int[] gearValue = getIndex(gear.get(rotateGear));
+        rotate(gear, rotateGear, dir);
+
+        for (int z = 0; z < 2; z++) {
+            int nextGear = rotateGear + d[z];
+
+            if (0 > nextGear || nextGear >= 4)
+                continue;
+            if (visited == nextGear)
+                continue;
+
+            int[] checkIndex = getIndex(gear.get(nextGear));
+            if (checkIndex[z ^ 1] != gearValue[z]) {
+                executeGear(gear, nextGear, (-1) * dir, rotateGear);
+            }
         }
     }
 
-    static Deque<Integer> makeGear(String[] gear){
+    static void rotate(List<Deque<Integer>> gear, int rotateGear, int dir) {
+        if (dir == 1) {
+            Deque<Integer> changeGear = gear.get(rotateGear);
+            int rotate = changeGear.pollLast();
+            changeGear.addFirst(rotate);
+        } else {
+            Deque<Integer> changeGear = gear.get(rotateGear);
+            int rotate = changeGear.pollFirst();
+            changeGear.addLast(rotate);
+        }
+    }
+
+    static Deque<Integer> makeGear(String[] gear) {
         Deque<Integer> deque = new ArrayDeque<>();
-        for (String data : gear){
+        for (String data : gear) {
             deque.add(Integer.parseInt(data));
         }
         return deque;
     }
 
-    static int[] getIndex(Deque<Integer> gear){
+    static int[] getIndex(Deque<Integer> gear) {
         Deque<Integer> index3 = new ArrayDeque<>(gear);
         Deque<Integer> index7 = new ArrayDeque<>(gear);
 
