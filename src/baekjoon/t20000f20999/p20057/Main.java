@@ -45,23 +45,21 @@ public class Main {
         print(directionArr);
         makeTornado();
         goTornado(directionArr);
-
     }
 
-    static void goTornado(int[][] arr){
+    static void goTornado(int[][] arr) {
         int x = N / 2;
         int y = N / 2;
 
-        while (true){
-            if (0 > x || 0 > y){
+        while (true) {
+            if (0 > x || 0 > y) {
                 break;
             }
-            print(sandBoard);
 
             int z = arr[x][y];
             int[][] newTornado;
 
-            if (z == 0){
+            if (z == 0) {
                 newTornado = tornado;
             } else if (z == 1) {
                 newTornado = rotate90(tornado);
@@ -81,40 +79,41 @@ public class Main {
             x = nx;
             y = ny;
         }
-
     }
 
-    static void magicTornado(int nx, int ny, int z, int sandAmount, int[][] arr){
-        // 방향만 정해주면 모래를 기준으로 퍼지는 것
-        int[][] sand = new int[5][5];
+    static void magicTornado(int x, int y, int z, int sandAmount, int[][] arr) {
+        // 현재 칸 기준으로 퍼지는 것
+        int[][] newArr = new int[5][5];
+        int leftSand = sandAmount;
 
-        for (int i = 0; i < 5; i++){
-            for (int j = 0; j < 5; j++){
-                if (arr[i][j] == 0)
-                    continue;
-                sand[i][j] += sandAmount / arr[i][j] * 0.01;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                newArr[i][j] = (int) sandAmount * arr[i][j] / 100;
+                leftSand -= newArr[i][j];
+            }
+        }
+        newArr[2 + (dx[z] * -1)][2 + (dy[z] * -1)] += leftSand;
+
+        for (int i = x - 2; i < 5 - x + 2; i++) {
+            for (int j = y - 2; j < 5 - y + 2; j++) {
+                if (0 > i || i >= N || 0 > j || j >= N)
+                    // 2 1 => 0 -1
+                    result += newArr[i - x + 2][j - y + 2];
+                else {
+                    System.out.printf("i : %d, j : %d, x : %d, y : %d, i - x + 2 : %d, j - y + 2 : %d %n", i, j, x, y, i - x + 2, j - y + 2);
+                    sandBoard[i][j] += newArr[i - x + 2][j - y + 2];
+                }
             }
         }
 
-//        for (int i = nx - 1; i < 5 - nx - 1; i++){
-//            for (int j = ny - 1; j < 5 - ny - 1; j++) {
-//                if (0 > i || i >= N || 0 > j || j >= N) {
-//                    result += sand[i - nx + 1][j - ny + 1];
-//                    sandAmount -= sand[i - nx + 1][j + ny + 1];
-//                } else {
-////                    System.out.printf("%d %d %d %d %n", i, j, nx, ny);
-//                    sandBoard[i][j] += sand[i - nx + 1][j - ny + 1];
-//                }
-//            }
-//            sandBoard[nx + (dx[z] * -1)][ny + (dy[z] * -1)] += sandAmount;
-//        }
+        print(newArr);
     }
 
     static int[][] rotate90(int[][] arr) {
         int[][] newArr = new int[5][5];
 
-        for (int x = 0; x < 5; x++){
-            for (int y = 0; y < 5; y++){
+        for (int x = 0; x < 5; x++) {
+            for (int y = 0; y < 5; y++) {
                 newArr[x][y] = arr[5 - 1 - y][x];
             }
         }
@@ -125,8 +124,8 @@ public class Main {
     static int[][] rotate180(int[][] arr) {
         int[][] newArr = new int[N][N];
 
-        for (int x = 0; x < 5; x++){
-            for (int y = 0; y < 5; y++){
+        for (int x = 0; x < 5; x++) {
+            for (int y = 0; y < 5; y++) {
                 newArr[x][y] = arr[5 - 1 - x][5 - 1 - y];
             }
         }
@@ -137,8 +136,8 @@ public class Main {
     static int[][] rotate270(int[][] arr) {
         int[][] newArr = new int[5][5];
 
-        for (int x = 0; x < 5; x++){
-            for (int y = 0; y < 5; y++){
+        for (int x = 0; x < 5; x++) {
+            for (int y = 0; y < 5; y++) {
                 newArr[x][y] = arr[y][5 - 1 - x];
             }
         }
@@ -162,7 +161,7 @@ public class Main {
         return makeDirectionArr(nx, ny, z, visited, board);
     }
 
-    static void makeTornado(){
+    static void makeTornado() {
         tornado[0][2] = 2;
         tornado[4][2] = 2;
         tornado[1][1] = 10;
