@@ -42,7 +42,6 @@ public class Main {
         int[][] board = new int[N][N];
 
         int[][] directionArr = makeDirectionArr(0, 0, 0, visited, board);
-        print(directionArr);
         makeTornado();
         goTornado(directionArr);
     }
@@ -52,7 +51,7 @@ public class Main {
         int y = N / 2;
 
         while (true) {
-            if (0 > x || 0 > y) {
+            if (x == 0 && y == 0) {
                 break;
             }
 
@@ -94,19 +93,14 @@ public class Main {
         }
         newArr[2 + (dx[z] * -1)][2 + (dy[z] * -1)] += leftSand;
 
-        for (int i = x - 2; i < 5 - x + 2; i++) {
-            for (int j = y - 2; j < 5 - y + 2; j++) {
+        for (int i = x - 2; i < x + 3; i++) {
+            for (int j = y - 2; j < y + 3; j++) {
                 if (0 > i || i >= N || 0 > j || j >= N)
-                    // 2 1 => 0 -1
                     result += newArr[i - x + 2][j - y + 2];
-                else {
-                    System.out.printf("i : %d, j : %d, x : %d, y : %d, i - x + 2 : %d, j - y + 2 : %d %n", i, j, x, y, i - x + 2, j - y + 2);
+                else
                     sandBoard[i][j] += newArr[i - x + 2][j - y + 2];
-                }
             }
         }
-
-        print(newArr);
     }
 
     static int[][] rotate90(int[][] arr) {
@@ -122,7 +116,7 @@ public class Main {
     }
 
     static int[][] rotate180(int[][] arr) {
-        int[][] newArr = new int[N][N];
+        int[][] newArr = new int[5][5];
 
         for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
