@@ -40,6 +40,7 @@ public class Main {
     static void check() {
         int[][] board = new int[R][C];
         for (int i = 0; i < R; i++) {
+            board[i][0] = 1;
             go(board, i, 0);
         }
 //        showArr(board);
