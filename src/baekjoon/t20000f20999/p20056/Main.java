@@ -31,6 +31,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Main {
+    static class Pointer {
+        int r, c, m, d, s;
+        Pointer (int r, int c, int m, int d, int s) {
+            this.r = r;
+            this.c = c;
+            this.m = m;
+            this.d = d;
+            this.s = s;
+        }
+    }
+
+
     static int N, M ,K;
     static List<int[]> fireBall;
     static int[] dx = {-1, -1, 0, 1, 1, 1, 0, -1};
@@ -51,12 +63,12 @@ public class Main {
     }
 
     static void check() {
-        List<List<List<Integer>>> board = makeList();
+        List<List<List<Pointer>>> board = makeList();
 
     }
 
-    static List<List<List<Integer>>> makeList() {
-        List<List<List<Integer>>> tmp = new ArrayList<>();
+    static List<List<List<Pointer>>> makeList() {
+        List<List<List<Pointer>>> tmp = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
             tmp.add(new ArrayList<>());
@@ -64,16 +76,23 @@ public class Main {
                 tmp.get(i).add(new ArrayList<>());
             }
         }
-        int idx = 0;
         for (int[] fire : fireBall) {
             int x = fire[0] - 1;
             int y = fire[1] - 1;
-            tmp.get(x).get(y).add(idx++);
+            int m = fire[2];
+            int d = fire[3];
+            int s = fire[4];
+            tmp.get(x).get(y).add(new Pointer(x, y, m, d, s));
         }
 
         return tmp;
     }
 }
 
-// 표현이 상당히 까다롭네
+// 표현이 상당히 까다롭네 x 2
+// 못해먹겠다
+
 // 자료구조좀 생각하고 다시 풀 것
+// 따로 배열(리스트)를 만들지 않고 주어진 거로 바로 하기
+// 이동이 끝나면 정렬을 해서 체크를 하기
+// 각각의 객체를 담아줄 클래스를 만들어서 하기
