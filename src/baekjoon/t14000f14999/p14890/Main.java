@@ -28,49 +28,82 @@ import java.util.Arrays;
 public class Main {
     static int N, L;
     static int[][] arr;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] tmp = br.readLine().split(" ");
+
         N = Integer.parseInt(tmp[0]);
         L = Integer.parseInt(tmp[1]);
 
         arr = new int[N][N];
-
         for (int i = 0; i < N; i++) {
             arr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
         }
 
-        rumWay();
+        System.out.println(runway());
     }
 
-    /**
-     * 몇개의 길을 지나갈 수 있는지 구해주는 메소드
-     * */
-    static void rumWay() {
+    static int runway() {
         int result = 0;
 
-        for (int[] road : arr) {
-            check(road);
-        }
+        for (int i = 0; i < N; i++) {
+            result += check(arr[i]);
 
-        for (int j = 0; j < N; j++) {
             int[] newArr = new int[N];
-            for (int i = 0; i < N; i++) {
-                newArr[i] = arr[i][j];
+            for (int j = 0; j < N; j++) {
+                newArr[j] = arr[j][i]; // 해당 배열이 정사각형이라서 가능
             }
-
-            check(newArr);
+            result += check(newArr);
         }
-
+        return result;
     }
 
-    /**
-     * 해당 길을 지나갈 수 있는지 확인해주는 메소드
-     * */
-    static void check(int[] arr) {
+    static int check(int[] arr) {
+        int[] runwayArr = new int[N];
+
+        for (int i = 0; i < N - 1; i++) {
+            if (Math.abs(arr[i] - arr[i + 1]) >= 2)
+                return 0;
+            if (arr[i] - arr[i + 1] != 1)
+                continue;
+
+            // 경사로를 설치할 수 있는지 확인하기
+            for (int j = i + 1; j < i + 1 + L; j++) {
+                if (j >= N)
+                    // 경사로의 길이가 배열을 넘은 경우
+                    return 0;
+                if (arr[i + 1] != arr[j])
+                    // 연속된 길이가 다른 경우
+                    return 0;
+                runwayArr[j] = 1;
+            }
+        }
+
+        for (int i = N - 1; i > 0; i--) {
+            // 더이상 차이가 2 이상인 것은 없어
+            if (arr[i] - arr[i - 1] != 1){
+                continue;
+            }
+            // 경사로를 설치할 수 있는지 확인하기
+            for (int j = i - 1; j > i - 1 - L; j--) {
+                if (j < 0)
+                    // 경사로의 길이가 배열을 넘은 경우
+                    return 0;
+                if (runwayArr[j] == 1)
+                    // 경사로가 있는 곳에는 경사로를 설치 못함
+                    return 0;
+                if (arr[i - 1] != arr[j])
+                    // 연속된 길이가 다른 경우
+                    return 0;
+                runwayArr[j] = 1;
+            }
+        }
+        return 1;
     }
 }
 
 // 해당 문제에서 "동시에" 라는 말이 없음 => 길 하나만 보고 지나갈 수 있는지 판단하면 됨
 // 당연히 "동시에"라는 말이 없기때문에 지나갈 수 있는 길의 최대/최소를 묻는 것이 아님 => 백트래킹이 아님
+// 양 옆에서 갈 것 => for문 한번에 갈 것, 만약에 어려우면 왼쪽 한번 가고, 오른쪽 한번 가기
+// => 가능하면 정답 + 1해주기
+// 전과의 높이가 1이 차이나면 L만큼 앞을 보기
