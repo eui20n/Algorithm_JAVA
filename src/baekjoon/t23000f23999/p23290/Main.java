@@ -31,13 +31,28 @@ import java.util.*;
 
 public class Main {
     static int M, S;
-    static List<List<List<int[]>>> fishInfo;
+    static List<List<List<Integer>>> fishInfo;
     static int[] shark = new int[2];
     static int[] fishDx = {0, -1, -1, -1, 0, 1, 1, 1};
     static int[] fishDy = {-1, -1, 0, 1, 1, 1, 0, -1};
-    static int[] sharkDx = {0, 0, -1, 1};
-    static int[] sharkDy = {1, -1, 0, 0};
+    static int[] sharkDx = {-1, 0, 1, 0};
+    static int[] sharkDy = {0, -1, 0, 1};
     static int[][] smellArr = new int[4][4]; // 냄새를 담을 배열로 숫자가 들어갈 예정 -> 냄새배열의 값을 1씩 빼주면 알아서 냄새가 없어지게 가능
+    static int[][] sizeArr;
+    static List<List<List<Integer>>> newList;
+    static PriorityQueue<int[]> select = new PriorityQueue<>((o1, o2) -> {
+        if (o1[3] == o2[3]) {
+            if (o1[0] == o2[0]) {
+                if (o1[1] == o2[1]) {
+                    return o2[2] - o1[2];
+                }
+                return o2[1] - o1[1];
+            }
+            return o2[0] - o1[0];
+        }
+        return o1[3] - o2[3];
+    });
+    // 우선순위 큐 생성해주기
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,35 +66,127 @@ public class Main {
             int[] tmp2 = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
             int fishX = tmp2[0] - 1;
             int fishY = tmp2[1] - 1;
-            int fishZ = tmp2[2];
+            tmp2[2] -= 1;
 
-            fishInfo.get(fishX).get(fishY).add(tmp2);
+            fishInfo.get(fishX).get(fishY).add(tmp2[2]); // 사실 물고기 방향만 있어도 상관없음
         }
         int[] tmp3 = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
         shark[0] = tmp3[0] - 1;
         shark[1] = tmp3[1] - 1;
-        wizard();
+        System.out.println(wizard());
     }
 
-    static void wizard() {
-        // 1. 상어가 복제 마법을 시전한다. => 5번에서 복제됨
-        // 2. 모든 물고기가 이동을 한다. 상어, 냄새, 벽 밖으로는 이동 못함 => 8방향
-        movingFish();
-        // 3. 상어가 물고기를 가장 많이 잡을 수 있는 곳으로 3칸 이동 => 4방향, 상어를 잡으면 냄새가 생김
-        // 4. 냄새의 유효기간이 끝난 것들이 사라짐 => 2턴
-        // 5. 물고기가 복제됨
+    static int wizard() {
+        int time = 0;
+        while (true) {
+            if (time++ == S) {
+                break;
+            }
+            // 1. 상어가 복제 마법을 시전한다. => 5번에서 복제됨
+            // 2. 모든 물고기가 이동을 한다. 상어, 냄새, 벽 밖으로는 이동 못함 => 8방향
+            newList = movingFish();
+            // 3. 상어가 물고기를 가장 많이 잡을 수 있는 곳으로 3칸 이동 => 4방향, 상어를 잡으면 냄새가 생김
+            sizeArr = makeCnt();
+            movingCheck(shark[0], shark[1], 0, new int[4]);
+            movingShark(select.poll());
+            // 4. 냄새의 유효기간이 끝난 것들이 사라짐 => 2턴
+            deleteSmell();
+            // 5. 물고기가 복제됨
+            fishInfo = cloneFish();
+        }
+        int amount = fishCnt();
+        return amount;
     }
 
-    static void movingFish() {
-        List<List<List<int[]>>> newList = makeList();
+    static int fishCnt() {
+        int cnt = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                cnt += fishInfo.get(i).get(j).size();
+            }
+        }
+        return cnt;
+    }
+
+    static List<List<List<Integer>>> cloneFish() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int fish : fishInfo.get(i).get(j)) {
+                    newList.get(i).get(j).add(fish);
+                }
+            }
+        }
+        return newList;
+    }
+
+    static void deleteSmell() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (smellArr[i][j] > 0)
+                    smellArr[i][j] -= 1;
+            }
+        }
+    }
+
+    static void movingShark(int[] dir) {
+        for (int i = 0; i < 3; i++) {
+            shark[0] = shark[0] + sharkDx[dir[i] - 1];
+            shark[1] = shark[1] + sharkDy[dir[i] - 1];
+
+            if (newList.get(shark[0]).get(shark[1]).size() >= 1) {
+                newList.get(shark[0]).get(shark[1]).clear();
+                smellArr[shark[0]][shark[1]] = 3;
+            }
+        }
+    }
+
+    static void movingCheck(int x, int y, int cnt, int[] dir) {
+        // 3칸 백트랙킹
+        // 최악의 경우 64번을 함
+        // 정렬까지 한다면 좀 더 시간이 소요가 되는데, 해당 작업을 최대 100함
+        // 10000번이면 그냥 할만함
+        if (cnt == 3) {
+            // 이 부분 우선순위 큐로 구현해보기
+            // 처음 방향, 두번째 방향, 세번째 방향, 상어가 격리시킨 물고기의 수
+            select.add(new int[] {dir[0], dir[1], dir[2], dir[3]});
+            if (select.size() >= 2) {
+                // 우선순위 큐를 조건의 반대로 생성해서, 가장 앞에 있는 것을 빼면 됨
+                // 무조건 2개면 빼기때문에 가장 앞에 있는 것은 조건에 가장 최적화된 값이 남게됨
+                select.poll();
+            }
+            return;
+        }
+
+        for (int z = 0; z < 4; z++) {
+            int nx = x + sharkDx[z];
+            int ny = y + sharkDy[z];
+
+            if (0 > nx || nx >= 4)
+                continue;
+            if (0 > ny || ny >= 4)
+                continue;
+            int size = sizeArr[nx][ny];
+
+            dir[cnt] = z + 1;
+            dir[3] += size;
+            sizeArr[nx][ny] = 0;
+            movingCheck(nx, ny, cnt + 1, dir);
+            dir[cnt] = 0;
+            dir[3] -= size;
+            sizeArr[nx][ny] = size;
+        }
+    }
+
+    static List<List<List<Integer>>> movingFish() {
+        List<List<List<Integer>>> newList = makeList();
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                List<int[]> fishList = fishInfo.get(i).get(j);
-                for (int[] fish : fishList) {
-                    int x = fish[0];
-                    int y = fish[1];
-                    int z = fish[2];
+                List<Integer> fishList = fishInfo.get(i).get(j);
+                for (int fish : fishList) {
+                    int x = i;
+                    int y = j;
+                    int z = fish;
 
                     for (int d = 0; d < 8; d++) {
                         int newZ = z - d < 0 ? z - d + 8 : z - d;
@@ -100,17 +207,18 @@ public class Main {
                         }
                         x = nx;
                         y = ny;
+                        z = newZ;
                         break;
                     }
-                    newList.get(x).get(y).add(new int[]{x, y, z});
+                    newList.get(x).get(y).add(z);
                 }
             }
         }
-        cntPrint(newList);
+        return newList;
     }
 
-    static List<List<List<int[]>>> makeList() {
-        List<List<List<int[]>>> newList = new ArrayList<>();
+    static List<List<List<Integer>>> makeList() {
+        List<List<List<Integer>>> newList = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
             newList.add(new ArrayList<>());
@@ -122,10 +230,20 @@ public class Main {
         return newList;
     }
 
-    static void cntPrint(List<List<List<int[]>>> list) {
+    static int[][] makeCnt() {
+        int[][] newArr = new int[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                System.out.print(list.get(i).get(j).size());
+                newArr[i][j] += newList.get(i).get(j).size();
+            }
+        }
+        return newArr;
+    }
+
+    static void print(int[][] arr) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(arr[i][j] + " ");
             }
             System.out.println();
         }
@@ -134,5 +252,4 @@ public class Main {
 }
 
 // 메모리가 차고 넘치기 때문에 막 사용할 예정 => 문제를 풀이하면 줄일 수 있는 부분 줄이기
-// 물고기가 잘 이동안함
-// 물고기 이동부터 잘 해주기
+// 코드가 너무너무 마음에 안든다.

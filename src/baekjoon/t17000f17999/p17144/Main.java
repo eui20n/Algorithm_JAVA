@@ -71,17 +71,21 @@ public class Main {
                 directionArr[i][j] = -1;
             }
         }
-        makeDirectionArr(directionArr, "Up", cleaner[0][0], cleaner[0][1]);
-        makeDirectionArr(directionArr, "Down", cleaner[1][0], cleaner[1][1]);
+
+        makeDirectionArr(directionArr, "Up", cleaner[0][0], cleaner[0][1]); // 위 공기청정기의 방향 설정(시계방향)
+        makeDirectionArr(directionArr, "Down", cleaner[1][0], cleaner[1][1]); // 아래 공기청정기의 방향 설정(반시계방향)
 
 
         int time = 0;
         while (true) {
             if (time == T)
+                // 시간만큼 하면 종료
                 break;
+            // 1. 미세먼지 확산
             spread();
-            wind(directionArr, cleaner[0][0], cleaner[0][1]);
-            wind(directionArr, cleaner[1][0], cleaner[1][1]);
+            // 2. 공기청정기 작동
+            wind(directionArr, cleaner[0][0], cleaner[0][1]); // 위 공기청정기 작동
+            wind(directionArr, cleaner[1][0], cleaner[1][1]); // 아래 공기청정기 작동
             time++;
         }
 
@@ -107,6 +111,9 @@ public class Main {
 
     /**
      * 바람이 부는 메소드
+     * int[][] directionArr : 미리 설정했던 방향 배열
+     * int startX : 시작의 X 값
+     * int startY : 시작의 Y 값
      */
     static void wind(int[][] directionArr, int startX, int startY) {
         int x = startX;
@@ -122,6 +129,8 @@ public class Main {
             if (arr[nx][ny] == -1)
                 break;
 
+            // 미세먼지 이동을 안해주는 것
+            // 이렇게 안해도 되는데, 이렇게 하고 싶었음
             arr[nx][ny] = tmp + arr[nx][ny];
             tmp = arr[nx][ny] - tmp;
             arr[nx][ny] = arr[nx][ny] - tmp;
@@ -143,8 +152,8 @@ public class Main {
                 if (arr[x][y] == -1)
                     continue;
 
-                int spreadNum = arr[x][y] / 5;
-                int spreadCnt = 0;
+                int spreadNum = arr[x][y] / 5; // 확산될 양
+                int spreadCnt = 0; // 몇번 확산됬는지
 
                 for (int z = 0; z < 4; z++) {
                     int nx = x + dx[z];
@@ -159,7 +168,7 @@ public class Main {
                     spreadCnt += 1;
                     tmpArr[nx][ny] += spreadNum;
                 }
-                tmpArr[x][y] -= spreadNum * spreadCnt;
+                tmpArr[x][y] -= spreadNum * spreadCnt; // 원래 먼지 - 확산된 양
             }
         }
 
@@ -169,14 +178,21 @@ public class Main {
                 if (arr[i][j] == -1){
                     continue;
                 }
-                arr[i][j] += tmpArr[i][j];
-                tmpArr[i][j] = 0;
+                arr[i][j] += tmpArr[i][j]; // 기존에 배열에 합쳐주기
+                tmpArr[i][j] = 0; // 0으로 해줘서, 해당 배열을 새로 만들기 보다는 계속해서 재사용
             }
         }
     }
 
+    /**
+     * 미리 공기청정기의 방향을 표시해주는 메소드
+     * int[][] arr : 방향을 담을 배열
+     * String check : 위인지 아래인지 알려주기 위한 파라미터
+     * int startX : 시작의 X 값
+     * int startY : 시작의 Y 값
+     * */
     static void makeDirectionArr(int[][] arr, String check, int startX, int startY) {
-        int dir = check.equals("Up") ? 0 : 4;
+        int dir = check.equals("Up") ? 0 : 4; // up이면 시계방향, 아니면 반시계방향
         int z = 0;
         int x = startX;
         int y = startY;
@@ -186,6 +202,7 @@ public class Main {
             int ny = y + dy[z + dir];
 
             if (0 > nx || nx >= R || 0 > ny || ny >= C) {
+                // 범위를 벗어나면 방향을 바꿔줌
                 z = z + 1 == 4 ? 0 : z + 1;
                 continue;
             }
@@ -193,7 +210,7 @@ public class Main {
                 arr[x][y] = z + dir;
                 return;
             }
-            arr[x][y] = z + dir;
+            arr[x][y] = z + dir; // 해당 방향을 배열에 넣어줌
             x = nx;
             y = ny;
         }
@@ -209,3 +226,11 @@ public class Main {
         System.out.println();
     }
 }
+
+/*
+        정리
+    1. 이렇게 방향이 고정되어 있는 문제일 경우 나는 방향을 미리 설정을 해줌
+    1-1. 이렇게 방향을 미리 설정해서 하는 것이 나는 더 편했음 => 범위를 생각안하고 그냥 하면 됨
+    2. 미세먼지가 동시에 퍼지기 때문에 퍼질 때 다른 배열을 만들어서 관리
+    3. 그 외는 구현을 하면 됨
+*/

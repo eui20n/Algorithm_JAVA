@@ -24,8 +24,8 @@ import java.util.Arrays;
 
 public class Solution {
     static int T;
-    static int[] dx = {1, 0, 0};
-    static int[] dy = {0, -1, 1};
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -62,9 +62,10 @@ public class Solution {
 
     static void breakWall(int[][] arr, int[] broken, int W, int H) {
         for (int wall : broken) {
-            for (int i = H - 1; i >= 0; i--) {
+            for (int i = 0; i < H; i++) {
                 if (arr[i][wall - 1] == 0)
                     continue;
+                // 아무 벽돌도 없는 경우가 있을 수도 있음
 
                 // 3방향 보기 => 한방향씩 보면서 처리하기, 위는 안봐도됨
                 // 처리는 백트랙킹하기
@@ -76,7 +77,7 @@ public class Solution {
     static void broken(int[][] arr, int x, int y) {
         // 해당 위치에 있는 벽돌 부수기
         int go = arr[x][y] - 1; // 얼만큼 가는지 알려주는 변수
-        for (int z = 0; z < 3; z++) {
+        for (int z = 0; z < 4; z++) {
             for (int i = 0; i < go; i++) {
 
             }
