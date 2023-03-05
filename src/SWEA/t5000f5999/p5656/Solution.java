@@ -20,12 +20,15 @@ package SWEA.t5000f5999.p5656;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 
 public class Solution {
     static int T;
     static int[] dx = {-1, 1, 0, 0};
     static int[] dy = {0, 0, -1, 1};
+    static int result;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -38,49 +41,120 @@ public class Solution {
             int H = Integer.parseInt(tmp[2]); // 행
 
             int[][] arr = new int[H][W];
+            result = Integer.MAX_VALUE;
 
             for (int j = 0; j < H; j++) {
                 arr[j] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
             }
             check(arr, new int[N], N, W, H, 0);
-            print(arr);
+            System.out.printf("#%d %d %n", i, result);
+//            breakWall(arr, new int[] {3}, W, H);
+//            print(arr);
         }
     }
 
     static void check(int[][] arr, int[] broken, int N, int W, int H, int cnt) {
         if (N == cnt) {
             int[][] newArr = deepCopy(arr, W, H);
-            breakWall(newArr, broken, W, H);
+            int leftWall = breakWall(newArr, broken, W, H);
+            result = Math.min(leftWall, result);
+            return;
         }
 
         for (int i = 0; i < W; i++) {
+            if (result == 0)
+                return;
+
             broken[cnt] = i + 1;
             check(arr, broken, N, W, H, cnt + 1);
             broken[cnt] = 0;
         }
     }
 
-    static void breakWall(int[][] arr, int[] broken, int W, int H) {
+    static int breakWall(int[][] arr, int[] broken, int W, int H) {
+        int leftWall = 0;
         for (int wall : broken) {
             for (int i = 0; i < H; i++) {
                 if (arr[i][wall - 1] == 0)
                     continue;
                 // 아무 벽돌도 없는 경우가 있을 수도 있음
-
-                // 3방향 보기 => 한방향씩 보면서 처리하기, 위는 안봐도됨
-                // 처리는 백트랙킹하기
+                // 처리는 그냥 하기
                 broken(arr, i, wall - 1);
+//                print(arr);
+                // 중력
+                leftWall = gravity(arr);
+                if (leftWall == 0)
+                    return leftWall;
+
+                break;
             }
         }
+        return leftWall;
     }
+
+    static int gravity(int[][] arr) {
+        int r = arr.length;
+        int c = arr[0].length;
+        int amount = 0;
+
+        Deque<Integer> dq = new ArrayDeque<>();
+
+        for (int j = 0; j < c; j++) {
+            for (int i = r - 1; i >= 0; i--) {
+                if (arr[i][j] == 0)
+                    continue;
+                dq.add(arr[i][j]);
+                arr[i][j] = 0;
+                amount += 1;
+            }
+            for (int i = r - 1; i >= 0; i--) {
+                if (dq.isEmpty())
+                    break;
+                arr[i][j] = dq.pollFirst();
+            }
+        }
+
+        return amount;
+    }
+
 
     static void broken(int[][] arr, int x, int y) {
         // 해당 위치에 있는 벽돌 부수기
         int go = arr[x][y] - 1; // 얼만큼 가는지 알려주는 변수
-        for (int z = 0; z < 4; z++) {
-            for (int i = 0; i < go; i++) {
+        arr[x][y] = 0;
 
+        Deque<int[]> q = new ArrayDeque<>();
+        q.add(new int[]{x, y, go, 0});
+        q.add(new int[]{x, y, go, 1});
+        q.add(new int[]{x, y, go, 2});
+        q.add(new int[]{x, y, go, 3});
+
+        while (true) {
+            if (q.isEmpty())
+                break;
+            int[] tmp = q.poll();
+            x = tmp[0];
+            y = tmp[1];
+            int wallCnt = tmp[2];
+            int z = tmp[3];
+
+            int nx = x + dx[z];
+            int ny = y + dy[z];
+
+            if (0 > nx || nx >= arr.length)
+                continue;
+            if (0 > ny || ny >= arr[0].length)
+                continue;
+            if (wallCnt == 0)
+                continue;
+            if (arr[nx][ny] - 1 > 0) {
+                q.add(new int[] {nx, ny, arr[nx][ny] - 1, 0});
+                q.add(new int[] {nx, ny, arr[nx][ny] - 1, 1});
+                q.add(new int[] {nx, ny, arr[nx][ny] - 1, 2});
+                q.add(new int[] {nx, ny, arr[nx][ny] - 1, 3});
             }
+            q.add(new int[] {nx, ny, wallCnt - 1, z});
+            arr[nx][ny] = 0;
         }
     }
 
