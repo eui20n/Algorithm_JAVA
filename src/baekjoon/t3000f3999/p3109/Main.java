@@ -84,3 +84,14 @@ public class Main {
         System.out.println();
     }
 }
+
+/*
+5 9
+.x.....x.
+.x..x..x.
+.x..x..x.
+....x....
+.x..x..x.
+
+==> 1
+ */
