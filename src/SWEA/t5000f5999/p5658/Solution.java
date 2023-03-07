@@ -38,22 +38,24 @@ public class Solution {
 
     static int password(char[] arr, int N, int K) {
         List<Integer> password = new ArrayList<>();
-        int window = N / 4;
+        int window = N / 4; // 슬라이딩 윈도를 하기 위해서 창문 크기 설정
         for (int i = 0; i < N; i++) {
+            // 창문
             char[] tmp = new char[window];
 
             for (int j = i; j < window + i; j++) {
+                // 창문 열기
                 int idx = j >= N ? j - N : j;
                 int idx2 = j - i >= N ? j - i - N : j - i;
                 tmp[idx2] = arr[idx];
             }
 
-            Integer num = Integer.parseInt(String.valueOf(tmp), 16);
+            Integer num = Integer.parseInt(String.valueOf(tmp), 16); // 신기방기, 뒤에 진수를 쓰면 해당 문자열을 해당 진수로 변환해줌
             if (password.contains(num))
                 continue;
             password.add(num);
         }
-
+        // 크기순으로 정렬
         Collections.sort(password, (o1, o2) -> {
             return o2 - o1;
         });
@@ -61,3 +63,4 @@ public class Solution {
     }
 }
 
+// 슬라이딩 윈도우를 활용해서 풀이하는 문제라고 생각

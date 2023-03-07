@@ -27,15 +27,6 @@ public class Solution {
             this.y = y;
             this.dist = dist;
         }
-
-        @Override
-        public String toString() {
-            return "Pointer{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    ", dist=" + dist +
-                    '}';
-        }
     }
 
     static int T;
