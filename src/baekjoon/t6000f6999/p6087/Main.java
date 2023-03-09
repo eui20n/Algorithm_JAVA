@@ -14,8 +14,7 @@ package baekjoon.t6000f6999.p6087;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.PriorityQueue;
 
 public class Main {
     static class Pointer {
@@ -65,7 +64,9 @@ public class Main {
         int[] end = laserInfo[1];
 
         int[][] visited = makeVisited();
-        Deque<Pointer> q = new ArrayDeque<>();
+        PriorityQueue<Pointer> q = new PriorityQueue<>((o1, o2) -> {
+            return o2.mirrorCnt - o1.mirrorCnt;
+        });
 
         visited[start[0]][start[1]] = 0;
         q.add(new Pointer(start[0], start[1], 0, 0, -1));
@@ -95,7 +96,7 @@ public class Main {
                 q.add(new Pointer(nx, ny, newMirrorCnt, p.dist + 1, z));
             }
         }
-        print(visited);
+//        print(visited);
         return visited[end[0]][end[1]];
     }
 
@@ -131,16 +132,6 @@ public class Main {
         }
         System.out.println();
     }
-
-    static void print(boolean[][] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
 }
 
 // 각 점에 도달을 할 때, 거울을 설치가 비용을 카운트 해서 가장 작은 것만 가면 됨
@@ -149,6 +140,7 @@ public class Main {
 // 어차피 3개니까 비트마스킹을 해도 되는데, 3차원 해도됨
 // 다익스트라 => 그냥 거울이 바뀐 곳이 더 적은 곳으로 계속해서 가주면 됨
 // 우선순위 큐를 사용해서 방향을 제일 적게 바꾼 것만 뽑아내면 됨
+// ??
 /*
 
 4 5
