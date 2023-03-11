@@ -13,16 +13,20 @@
 
 package baekjoon.t1000f1999.p1039;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    static int N, K;
+    static int N[], K;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
+        N = Arrays.stream(sc.next().split("")).mapToInt(Integer::parseInt).toArray();
         K = sc.nextInt();
+
+        System.out.println(Arrays.toString(N));
     }
 }
 
-// 그냥 제일 많은 것들을 빼면서 배치하면 될 듯 => 이웃과는 달라야함
-// 그 때 배치를 못하면 -1, 배치가능하면 배치한 것을 출력하면 될듯
+// 무조건 바꿔야함, 현재보다 작아지는 경우라도 바꿔야함
+// 바꿀 수 없는 경우는 가장 앞자리가 0이 오는 경우 => 이 때 -1을 출력
+// 그리디(현재의 위치를 가장 큰 값으로 만들기)로 하면 안됨 => 999999999와 같이 모두 같은 수일 경우에는 시간초과가 날 것 같음
