@@ -27,7 +27,7 @@ public class Main {
 
     static void check() {
         int cntB = cntB();
-        int cluster = clusterB();
+        int cluster;
     }
 
     static int cntB() {
@@ -40,6 +40,7 @@ public class Main {
         return cnt;
     }
 }
+
 // 결국에는 b를 한곳에 뭉치고 싶은 것
 // bfs로 바꾸면 될거 같음
 // 못가는 곳은 옆에 b가 없는 곳
