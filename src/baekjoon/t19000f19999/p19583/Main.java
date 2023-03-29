@@ -38,6 +38,7 @@ public class Main {
         endTime1 = changeSecond(tmp[1]);
         endTime2 = changeSecond(tmp[2]);
         int standard = startTime;
+        String tmp2;
 
         while (true) {
             if (standard >= endTime2) {
@@ -45,6 +46,7 @@ public class Main {
             }
 
             String[] student = br.readLine().split(" ");
+
             standard = check(student, standard);
         }
 
