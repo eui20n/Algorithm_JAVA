@@ -34,7 +34,63 @@ public class Main {
                 if (arr[i][j] == 0)
                     zeroCnt += 1;
             }
+
+            makeVisited();
         }
+    }
+
+    static void makeVisited() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (arr[i][j] == 0)
+                    continue;
+                visitedR[i][arr[i][j] - 1] = true;
+            }
+        }
+
+        for (int j = 0; j < 9; j++) {
+            for (int i = 0; i < 9; i++) {
+                if (arr[i][j] == 0)
+                    continue;
+                visitedR[j][arr[i][j] - 1] = true;
+            }
+        }
+    }
+
+    static void answer(int cnt) {
+        if (cnt == zeroCnt) {
+            if (check()) {
+                print(arr);
+            }
+            return;
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (arr[i][j] != 0)
+                    continue;
+
+                for (int v = 1; v <= 9; v++) {
+                    if (visitedR[i][v - 1])
+                        continue;
+                    if (visitedC[j][v - 1])
+                        continue;
+
+                    visitedR[i][v - 1] = true;
+                    visitedC[j][v - 1] = true;
+                    arr[i][j] = v;
+                    answer(cnt + 1);
+                    arr[i][j] = 0;
+                    visitedR[i][v - 1] = false;
+                    visitedC[j][v - 1] = false;
+
+                }
+            }
+        }
+    }
+
+    static boolean check() {
+        return true;
+
     }
 
     static void print(int[][] arr) {
