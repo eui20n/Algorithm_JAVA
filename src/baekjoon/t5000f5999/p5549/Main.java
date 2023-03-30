@@ -25,12 +25,9 @@ public class Main {
     static int[][] ice;
     static int[][] jungle;
     static int[][] ocean;
-    static int[][] iceR;
-    static int[][] jungleR;
-    static int[][] oceanR;
-    static int[][] iceC;
-    static int[][] jungleC;
-    static int[][] oceanC;
+    static int[][] iceArr;
+    static int[][] jungleArr;
+    static int[][] oceanArr;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -43,12 +40,9 @@ public class Main {
         jungle = new int[R][C];
         ocean = new int[R][C];
 
-        iceR = new int[R][C];
-        jungleR = new int[R][C];
-        oceanR = new int[R][C];
-        iceC = new int[R][C];
-        jungleC = new int[R][C];
-        oceanC = new int[R][C];
+        iceArr = new int[R][C];
+        jungleArr = new int[R][C];
+        oceanArr = new int[R][C];
 
         for (int i = 0; i < R; i++) {
             String[] tmp2 = br.readLine().split("");
@@ -63,24 +57,22 @@ public class Main {
                 }
             }
         }
-        makeSumC();
-        makeSumR();
-        print(jungleR);
+        makeSum();
 
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < K; i++) {
             int[] range = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-            int jungleSum = arrSum(range, jungleR, jungleC);
-            int oceanSum = arrSum(range, oceanR, oceanC);
-            int iceSum = arrSum(range, iceR, iceC);
+            int jungleSum = arrSum(range, jungleArr);
+            int oceanSum = arrSum(range, oceanArr);
+            int iceSum = arrSum(range, iceArr);
             sb.append(jungleSum).append(" ").append(oceanSum).append(" ").append(iceSum).append("\n");
         }
         System.out.println(sb);
 
     }
 
-    static int arrSum(int[] range, int[][] arrR, int[][] arrC) {
+    static int arrSum(int[] range, int[][] arr) {
         int startX = range[0] - 1;
         int startY = range[1] - 1;
         int endX = range[2] - 1;
@@ -91,60 +83,45 @@ public class Main {
         int c = 0;
         int d = 0;
 
-        a = arrR[endX][endY];
+        a = arr[endX][endY];
         if (startX - 1 >= 0) {
-            b = arrR[startX - 1][endY];
+            b = arr[startX - 1][endY];
         }
         if (startY - 1 >= 0) {
-            c = arrC[endX][startY - 1];
+            c = arr[endX][startY - 1];
         }
         if (startX - 1 >= 0 && startY - 1 >= 0) {
-            d = arrR[startX - 1][startY - 1];
+            d = arr[startX - 1][startY - 1];
         }
         return (a - b - c + d);
 
     }
 
-    static void makeSumR() {
-        jungleR[0][0] = jungle[0][0];
-        oceanR[0][0] = ocean[0][0];
-        iceR[0][0] = ice[0][0];
+    static void makeSum() {
 
         for (int i = 0; i < R; i++) {
-            if (i != 0) {
-                jungleR[i][0] += jungle[i][0] + jungleR[i - 1][C - 1];
-                oceanR[i][0] += ocean[i][0] + oceanR[i - 1][C - 1];
-                iceR[i][0] += ice[i][0] + iceR[i - 1][C - 1];
-            }
-            for (int j = 1; j < C; j++) {
+            for (int j = 0; j < C; j++) {
                 // 정글
-                jungleR[i][j] = (jungle[i][j] + jungleR[i][j - 1]);
-                // 바다
-                oceanR[i][j] = (ocean[i][j] + oceanR[i][j - 1]);
-                // 얼음
-                iceR[i][j] = (ice[i][j] + iceR[i][j - 1]);
-            }
-        }
-    }
+                int jungleA = i - 1 >= 0 ? jungleArr[i - 1][j] : 0;
+                int jungleB = j - 1 >= 0 ? jungleArr[i][j - 1] : 0;
+                int jungleC = (i - 1) >= 0 && (j - 1) >= 0 ? jungleArr[i - 1][j - 1] : 0;
+                int jungleD = jungle[i][j];
 
-    static void makeSumC() {
-        jungleC[0][0] = jungle[0][0];
-        oceanC[0][0] = ocean[0][0];
-        iceC[0][0] = ice[0][0];
-
-        for (int j = 0; j < C; j++) {
-            if (j != 0) {
-                jungleC[0][j] += jungle[0][j] + jungleC[R - 1][j - 1];
-                oceanC[0][j] += ocean[0][j] + oceanC[R - 1][j - 1];
-                iceC[0][j] += ice[0][j] + iceC[R - 1][j - 1];
-            }
-            for (int i = 1; i < R; i++) {
-                // 정글
-                jungleC[i][j] = (jungle[i][j] + jungleC[i - 1][j]);
+                jungleArr[i][j] = jungleA + jungleB - jungleC + jungleD;
                 // 바다
-                oceanC[i][j] = (ocean[i][j] + oceanC[i - 1][j]);
+                int oceanA = i - 1 >= 0 ? oceanArr[i - 1][j] : 0;
+                int oceanB = j - 1 >= 0 ? oceanArr[i][j - 1] : 0;
+                int oceanC = (i - 1) >= 0 && (j - 1) >= 0 ? oceanArr[i - 1][j - 1] : 0;
+                int oceanD = ocean[i][j];
+
+                oceanArr[i][j] = oceanA + oceanB - oceanC + oceanD;
                 // 얼음
-                iceC[i][j] = (ice[i][j] + iceC[i - 1][j]);
+                int iceA = i - 1 >= 0 ? iceArr[i - 1][j] : 0;
+                int iceB = j - 1 >= 0 ? iceArr[i][j - 1] : 0;
+                int iceC = (i - 1) >= 0 && (j - 1) >= 0 ? iceArr[i - 1][j - 1] : 0;
+                int iceD = ice[i][j];
+
+                iceArr[i][j] = iceA + iceB - iceC + iceD;
             }
         }
     }
@@ -159,8 +136,6 @@ public class Main {
         System.out.println();
     }
 }
-// bfs 한번
-//  100000
 
 // 이거 구간합임
 // 정글, 땅, 얼음을 나눠서 그냥 구간합을 하면 됨

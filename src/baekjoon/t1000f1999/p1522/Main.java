@@ -22,18 +22,36 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         word = br.readLine().split("");
 
-        check();
+        System.out.println(check());
     }
 
-    static void check() {
+    static int check() {
         int cntB = cntB();
-        int cluster;
+
+        if (cntB == word.length) {
+            return 0;
+        }
+
+        int result = Integer.MAX_VALUE;
+
+        for (int i = 0; i < word.length; i++) {
+            int minValue = 0;
+            for (int j = 0; j < cntB; j++) {
+                int idx = i + j >= word.length ? i + j - word.length : i + j;
+                if (word[idx].equals("a")) {
+                    minValue += 1;
+                }
+            }
+            result = Math.min(result, minValue);
+        }
+
+        return result;
     }
 
     static int cntB() {
         int cnt = 0;
         for (int i = 0; i < word.length; i++) {
-            if (word[i].equals("B")) {
+            if (word[i].equals("b")) {
                 cnt += 1;
             }
         }
@@ -41,8 +59,5 @@ public class Main {
     }
 }
 
-// 결국에는 b를 한곳에 뭉치고 싶은 것
-// bfs로 바꾸면 될거 같음
-// 못가는 곳은 옆에 b가 없는 곳
-// 옆에 b가 있는 곳으로 가게하기
-// 불끄기??? 비트마스킹으로 한번만 생각해보기 => a = 0, b = 1
+// B가 한곳에 뭉쳐야함
+
