@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import static java.lang.Math.max;
-
 public class Main {
     static String[] words;
 

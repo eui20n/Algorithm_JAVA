@@ -44,9 +44,14 @@ public class Main {
         while (true) {
             // 가장자리에는 무조건 치즈가 없기 때문에 bfs를 (0, 0)에서 시작하면 됨
             List<int[]> melting = bfs();
+            if (melting.size() == 0)
+                break;
             melt(melting);
+            size = melting.size();
             time += 1;
         }
+        System.out.println(time);
+        System.out.println(size);
     }
 
     static void melt(List<int[]> list) {

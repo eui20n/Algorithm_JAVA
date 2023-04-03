@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 
 public class Main {
     static double result;
-
     public static void main(String[] args) throws IOException {
         BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
         String[] temp = bf.readLine().split(" ");

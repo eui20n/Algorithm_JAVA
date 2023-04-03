@@ -1,4 +1,4 @@
-package baekjoon.t9000f9663.p9663;
+package baekjoon.t9000f9999.p9663;
 
 import java.util.Scanner;
 
