@@ -16,10 +16,46 @@ package baekjoon.t1000f1999.p1874;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Stack;
 
 public class Main2 {
+
+    static int[] arr;
+    static int N;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        arr = new int[N];
+
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
+        }
+
+        stackSequence();
+    }
+
+    static void stackSequence() {
+        Stack<Integer> stack = new Stack<>();
+        int idx = 0;
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 1; i <= N; i++) {
+            stack.add(i);
+            sb.append("+").append("\n");
+
+            while (true) {
+                if (stack.isEmpty())
+                    break;
+                if (stack.peek() != arr[idx])
+                    break;
+                idx++;
+                stack.pop();
+                sb.append("-").append("\n");
+            }
+        }
+        if (stack.isEmpty())
+            System.out.println(sb);
+        else
+            System.out.println("NO");
     }
 }
