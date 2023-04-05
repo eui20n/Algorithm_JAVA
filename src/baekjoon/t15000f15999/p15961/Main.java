@@ -42,16 +42,41 @@ public class Main {
             sushi[i] = Integer.parseInt(br.readLine());
         }
 
-        check();
+        System.out.println(check());
     }
 
-    static void check() {
+    static int check() {
         int result = 0;
+        int answer = 0;
         boolean[] visited = new boolean[3001];
 
-        // 덱으로 구현하기
-        Deque<Integer> deque = makeDeque();
+        // 처음 덱
+        Deque<Integer> deque = new ArrayDeque<>();
+        for (int i = 0; i < K; i++) {
+            int idx = sushi[i];
 
+            if (!visited[idx] && !coupon[idx])
+                result += 1;
+
+            deque.add(idx);
+            visited[idx] = true;
+        }
+        result += couponCnt;
+
+        for (int i = 1; i < N; i++) {
+            int startIdx = i - 1;
+            int endIdx = i + K;
+
+            int delete = deque.pollFirst();
+            if (!coupon[delete])
+                result -= 1;
+
+            if (!visited[sushi[endIdx]])
+                result += 1;
+            deque.addLast(sushi[endIdx]);
+            answer = Math.max(answer, result);
+        }
+        return answer;
     }
 
     static Deque<Integer> makeDeque() {
@@ -80,3 +105,6 @@ public class Main {
     3. 나머지 경우는 증가 시킴
     4. 다 증가 시킨 후 쿠폰의 개수 만큼 더해주기
  */
+
+
+// 다듬기
