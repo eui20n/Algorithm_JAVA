@@ -22,45 +22,50 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 
 public class Main {
+    static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
-            String[] sentence = br.readLine().split(" ");
-            if (sentence[0].equals(".") && sentence.length == 1)
+            char[] sentence = br.readLine().toCharArray();
+            if (sentence[0] == '.' && sentence.length == 1)
                 break;
 
             check(sentence);
-
         }
+        System.out.println(sb);
     }
 
-    static void check(String[] sentence) {
-        Stack<String> stack = new Stack<>();
+    static void check(char[] sentence) {
+        Stack<Character> stack = new Stack<>();
 
         String result = "yes";
 
-        for (String word : sentence) {
+        for (char word : sentence) {
             if (result.equals("no"))
                 break;
-            if (word.equals("(") || word.equals("[")) {
+            if (word == '(' || word == '[') {
                 stack.add(word);
-            } else if (word.equals(")")) {
-                if (stack.size() == 0 || !stack.peek().equals("(")) {
+            } else if (word == ')') {
+                if (stack.size() == 0) {
                     result = "no";
-                } else {
+                } else if (!(stack.peek() == '(')) {
+                    result = "no";
+                } else if (stack.peek() == '(') {
                     stack.pop();
                 }
-            } else if (word.equals("]")) {
-                if (stack.size() == 0 || !stack.peek().equals("[")) {
+            } else if (word == ']') {
+                if (stack.size() == 0) {
                     result = "no";
-                } else {
+                } else if (!(stack.peek() == '[')) {
+                    result = "no";
+                } else if (stack.peek() == '[') {
                     stack.pop();
                 }
             }
         }
         if (stack.size() != 0)
             result = "no";
-        System.out.println(result);
+        sb.append(result).append("\n");
     }
 }
