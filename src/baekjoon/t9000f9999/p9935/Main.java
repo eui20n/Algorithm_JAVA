@@ -38,7 +38,7 @@ public class Main {
 
         for (int i = 0; i < str.length; i++) {
             stack.add(str[i]);
-            System.out.println(stack);
+//            System.out.println(stack);
 
             if (stack.size() < explosionLength || stack.peek() != check)
                 continue;
@@ -47,15 +47,16 @@ public class Main {
             for (int j = explosionLength - 1; j >= 0; j--) {
                 // 같은지 확인
                 char tmpStr = stack.pop();
+                tmp.add(tmpStr);
                 if (tmpStr != explosionStr[j]) {
                     while (true) {
                         // 만약에 다르면 다시 추가해주기
+                        // 추가가 이상하게 되는 듯
                         if (tmp.isEmpty())
                             break;
                         stack.add(tmp.pop());
                     }
                 }
-                tmp.add(tmpStr);
             }
         }
         resultPrint(stack);
