@@ -26,3 +26,8 @@ public class Main {
         System.out.println(Arrays.toString(operator));
     }
 }
+
+// 우선 순위 => 괄호 * /
+// 그냥 하면 되는 것 => + -
+
+// 연산의 순서대로 빼면 되는 것
