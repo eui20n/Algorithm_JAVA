@@ -26,6 +26,7 @@ public class Main {
     static int T;
     static char[] words;
     static int K;
+    static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         T = Integer.parseInt(br.readLine());
@@ -35,13 +36,18 @@ public class Main {
             K = Integer.parseInt(br.readLine());
             check();
         }
+        System.out.println(sb);
     }
 
     static void check() {
         // 문자가 등장하는 위치를 기록하는 메소드
         List<List<Integer>> wordCnt = recordWordCnt();
         // 기록한 것을 가지고 슬라이딩 윈도우를 해주는 메소드
-        int[] result = slidingWindow();
+        int[] result = slidingWindow(wordCnt);
+        if (result[0] == Integer.MAX_VALUE)
+            sb.append(-1).append("\n");
+        else
+            sb.append(result[0]).append(" ").append(result[1]).append("\n");
     }
 
     static List<List<Integer>> recordWordCnt() {
@@ -53,8 +59,26 @@ public class Main {
         return wordCnt;
     }
 
-    static int[] slidingWindow() {
-        int[] result = new int[2];
+    static int[] slidingWindow(List<List<Integer>> wordCnt) {
+        int[] result = new int[2]; // 최소, 최대
+        result[0] = Integer.MAX_VALUE;
+        result[1] = Integer.MIN_VALUE;
+
+        for (int i = 0; i < wordCnt.size(); i++) {
+            List<Integer> wordList = wordCnt.get(i);
+            if (wordList.size() < K)
+                // 길이가 K보다 작은 것은 슬라이딩 윈도우를 못하고, 할 필요도 없음
+                continue;
+
+            for (int k = 0; k < wordList.size() - K + 1; k++) {
+                int start = wordList.get(k);
+                int end = wordList.get(k + K - 1);
+
+                result[0] = Math.min(end - start + 1, result[0]);
+                result[1] = Math.max(end - start + 1, result[1]);
+            }
+        }
+
         return result;
     }
 
