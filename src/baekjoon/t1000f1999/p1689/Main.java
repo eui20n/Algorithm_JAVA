@@ -32,7 +32,7 @@ public class Main {
 
         Collections.sort(line, ((o1, o2) -> {
             if (o1[0] == o2[0])
-                return o1[1] - o2[1];
+                return o2[1] - o1[1];
             return o1[0]- o2[0];
         }));
 
@@ -67,7 +67,7 @@ public class Main {
                 deque.add(now);
             } else {
                 // 덱에 값이 있는 경우
-                int[] top = deque.peek();
+                int[] top = deque.peekLast();
 
                 if (top[1] > now[0]) {
                     // 겹치는 경우
@@ -81,7 +81,7 @@ public class Main {
                             // 덱에 아무 것도 없으면 그만하기
                             break;
 
-                        top = deque.peek();
+                        top = deque.peekLast();
                         if (top[1] > now[0])
                             // 겹치는 부분
                             break;
@@ -102,6 +102,7 @@ public class Main {
             }
 //            result = Math.max(result, deque.size());
         }
+        // 정답 출력
         System.out.println(result);
     }
 }
