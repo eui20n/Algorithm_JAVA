@@ -20,6 +20,7 @@ import java.util.*;
 public class Main {
     static int N;
     static List<int[]> line = new ArrayList<>();
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -33,7 +34,7 @@ public class Main {
         Collections.sort(line, ((o1, o2) -> {
             if (o1[0] == o2[0])
                 return o2[1] - o1[1];
-            return o1[0]- o2[0];
+            return o1[0] - o2[0];
         }));
 
         check();
@@ -67,40 +68,52 @@ public class Main {
                 deque.add(now);
             } else {
                 // 덱에 값이 있는 경우
-                int[] top = deque.peekLast();
 
-                if (top[1] > now[0]) {
-                    // 겹치는 경우
-                    deque.add(now);
-                } else if (top[1] <= now[0]) {
-                    // 겹치지 않는 경우
-                    deque.poll();
+                // 가장 위에 있는 것을 순서대로 제거하는 경우
+                int[] top = deque.peekLast();
+                if (top[1] <= now[0]) {
+                    // 겹치지 않는 경우 => 겹치는 경우는 확인 안 해도됨
                     while (true) {
-                        // 겹치는 구간이 나올 때 까지 계속해서 값을 빼주기
+                        deque.pollLast();
                         if (deque.isEmpty())
-                            // 덱에 아무 것도 없으면 그만하기
                             break;
 
                         top = deque.peekLast();
                         if (top[1] > now[0])
-                            // 겹치는 부분
                             break;
-                        deque.poll();
                     }
-                    deque.add(now);
                 }
-            }
-            // 최대값 갱신
-            if (result < deque.size()) {
-                for (int j = 0; j < deque.size(); j++) {
-                    int[] tmp = deque.pollFirst();
-                    System.out.print(Arrays.toString(tmp) + " ");
-                    deque.addLast(tmp);
+                // 가장 아래 있는 것을 순서대로 제거하는 경우
+                if (!deque.isEmpty()) {
+                    int[] bottom = deque.peekFirst();
+                    if (bottom[1] <= now[0]) {
+                        // 겹치지 않는 경우
+                        while (true) {
+                            deque.pollFirst();
+                            if (deque.isEmpty())
+                                break;
+
+                            bottom = deque.peekFirst();
+                            if (bottom[1] > now[0])
+                                break;
+                        }
+                    }
                 }
-                System.out.println();
-                result = deque.size();
+                deque.add(now);
+                // 위 2가지 경우로 다 제거 된 후에는 덱에 값을 넣어주면 됨
+
+                // 최대값 갱신
+//                if (result < deque.size()) {
+//                    for (int j = 0; j < deque.size(); j++) {
+//                        int[] tmp = deque.pollFirst();
+//                        System.out.print(Arrays.toString(tmp) + " ");
+//                        deque.addLast(tmp);
+//                    }
+//                    System.out.println();
+//                    result = deque.size();
+//                }
             }
-//            result = Math.max(result, deque.size());
+            result = Math.max(result, deque.size());
         }
         // 정답 출력
         System.out.println(result);
