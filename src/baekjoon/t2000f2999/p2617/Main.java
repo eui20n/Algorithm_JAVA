@@ -22,7 +22,7 @@ public class Main {
     static int[][] arr;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        var tmp = br.readLine().split(" ");
+        String[] tmp = br.readLine().split(" ");
         N = Integer.parseInt(tmp[0]);
         M = Integer.parseInt(tmp[1]);
 
