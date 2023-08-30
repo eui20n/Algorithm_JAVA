@@ -36,7 +36,6 @@ public class Main {
         }
 
         int[][] sumArr = makeArr(arr);
-        printArr(sumArr);
 
         for (int t = 0; t < T; t++) {
             int[] loc = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
@@ -45,12 +44,19 @@ public class Main {
     }
 
     static void check(int[][] sumArr, int[] loc) {
-        int smallX = loc[0];
-        int smallY = loc[1];
-        int bigX = loc[2];
-        int bigY = loc[3] ;
+        int smallX = loc[0] - 1;
+        int smallY = loc[1] - 1;
+        int bigX = loc[2] - 1;
+        int bigY = loc[3] - 1;
 
-        int result = sumArr[bigX][bigY] - sumArr[smallX][bigY] - sumArr[bigX][smallY] + sumArr[smallX][smallY];
+        int bigSquare = sumArr[bigX][bigY];
+        int smallSquareX = smallX - 1 >= 0 ? sumArr[smallX - 1][bigY] : 0;
+        int smallSquareY = smallY - 1 >= 0 ? sumArr[bigX][smallY - 1] : 0;
+        int smallSquare = smallX - 1 >= 0 && smallY - 1 >= 0 ? sumArr[smallX - 1][smallY - 1] : 0;
+
+        int result = bigSquare - smallSquareX - smallSquareY + smallSquare;
+
+        System.out.println(result / ((bigX - smallX + 1) * (bigY - smallY + 1)));
     }
 
     static int[][] makeArr(int[][] arr) {
@@ -65,15 +71,5 @@ public class Main {
             }
         }
         return resultArr;
-    }
-
-    static void printArr(int[][] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 }
