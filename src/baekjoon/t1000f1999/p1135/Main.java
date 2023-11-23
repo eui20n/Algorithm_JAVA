@@ -50,13 +50,13 @@ public class Main {
             check(arr.get(i), child);
             dpTable[child] = Math.max(dpTable[child], check(arr.get(i), child));
         }
-
+        return 0;
     }
 
     static ArrayList<ArrayList<Integer>> makeChildArr() {
         ArrayList<ArrayList<Integer>> arr = new ArrayList<>();
         for (int i = 0; i < n; i++)  {
-            arr.add(new ArrayList<>);
+            arr.add(new ArrayList<>());
         }
 
         for (int i = 0; i < n; i++) {
