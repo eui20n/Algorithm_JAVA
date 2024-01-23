@@ -25,7 +25,6 @@ import java.util.Stack;
 
 public class Main {
     static char[] words;
-    static int cursor;
     static Stack<Character> leftStack = new Stack<>(); // 커서 기준으로 왼쪽
     static Stack<Character> rightStack = new Stack<>(); // 커서 기준으로 오른쪽
     public static void main(String[] args) throws IOException {
