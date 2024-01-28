@@ -23,28 +23,28 @@ import java.io.InputStreamReader;
 
 public class Main {
     static int T;
-
+    static int[] arr = new int[10001];
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         T = Integer.parseInt(br.readLine());
 
-        int[] arr = makeDpTable();
         for (int i = 0; i < T; i++) {
             int n = Integer.parseInt(br.readLine());
             System.out.println(arr[n]);
         }
     }
 
-    static int[] makeDpTable() {
-        int[] dpTable = new int[10001];
-        dpTable[1] = 1;
-        dpTable[2] = 2;
-        dpTable[3] = 3;
-
-        return dpTable;
+    static int makeDpTable() {
+        return 1;
     }
 }
 
-// dp의 향기가 난다.
-// 배낭 문제처럼 풀어야하나??
-// 처음에 그냥 다 만들고 답을 계속 찍어내면 되나?
+/*
+        DP로 예상
+        일단은 완전탐색을 통해서 답을 구하기
+        그 후, 가지를 치면서 불필요한 부분 없애기
+
+        => 이거 풀려면 그림을 그려야 될듯...
+
+
+ */

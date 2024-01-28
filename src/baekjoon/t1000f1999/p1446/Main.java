@@ -13,12 +13,16 @@ package baekjoon.t1000f1999.p1446;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Main {
     static int N;
     static int D;
-    static int[][] shortcut;
+    static List<int[]> shortcutList;
+    static int[][] shortcutArr;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] tmp = br.readLine().split(" ");
@@ -26,10 +30,64 @@ public class Main {
         N = Integer.parseInt(tmp[0]);
         D = Integer.parseInt(tmp[1]);
 
-        shortcut = new int[N][3];
+        shortcutArr = new int[N][3];
+        shortcutList = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
-            shortcut[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            shortcutArr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        }
+
+        check();
+    }
+
+    static void check() {
+        // 리스트 구해주기
+        makeList();
+
+        // 정렬해주기
+        Collections.sort(shortcutList, (o1, o2) -> {
+            return o1[0] - o2[0];
+        });
+
+        for (int i = 0; i < shortcutList.size(); i++) {
+            System.out.println(Arrays.toString(shortcutList.get(i)));
+        }
+    }
+
+    static void makeList() {
+        // 중복되는 지름길 중, 짧은 것만 남기고 없애는 작업
+        for (int i = 0; i < N; i++) {
+            boolean flag = false;
+            for (int j = 0; j < N; j++) {
+                if (i == j)
+                    continue;
+
+                int[] iArr = shortcutArr[i];
+                int[] jArr = shortcutArr[j];
+
+                if (iArr[1] - iArr[0] <= iArr[2]) {
+                    // 지름길이 아님
+                    flag = true;
+                    break;
+                }
+                if (iArr[i] > D) {
+                    // 여기로 가면 안됨
+                    flag = true;
+                    break;
+                }
+                if (iArr[0] != jArr[0] || iArr[1] != jArr[1])
+                    continue;
+                if (iArr[2] > jArr[2]) {
+                    // 현재 길 (i)보다 더 짧은 지름길이 있다는 의미임
+                    flag = true;
+                    break;
+                }
+
+            }
+
+            if (!flag) {
+                shortcutList.add(shortcutArr[i]);
+            }
         }
     }
 }
@@ -46,4 +104,6 @@ public class Main {
     2. 순서대로 지름길을 둔다.
     3. 이 때, 이미 지름길로 간 길이라면 건너뛴다.
     4. 끝!
+
+    12! => 4억 5천
  */
