@@ -13,16 +13,14 @@ package baekjoon.t1000f1999.p1446;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     static int N;
     static int D;
     static List<int[]> shortcutList;
     static int[][] shortcutArr;
+    static int[] distance = new int[10001]; // 각 배열의 위치는 현재 위치까지 오는데 걸리는 최소 시간
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] tmp = br.readLine().split(" ");
@@ -44,13 +42,49 @@ public class Main {
         // 리스트 구해주기
         makeList();
 
-        // 정렬해주기
-        Collections.sort(shortcutList, (o1, o2) -> {
-            return o1[0] - o2[0];
-        });
+        // 가기
+        go();
 
-        for (int i = 0; i < shortcutList.size(); i++) {
-            System.out.println(Arrays.toString(shortcutList.get(i)));
+        System.out.println(distance[D]);
+    }
+
+    static void go() {
+        distanceInit();
+        Deque<int[]> q = new ArrayDeque<>();
+
+        q.add(new int[] {0, 0}); // 현재 위치, 그 위치까지 가는 비용
+        distance[0] = 0;
+
+        while (true) {
+            if (q.isEmpty())
+                break;
+
+            int[] p = q.poll();
+            int x = p[0];
+            int cost = p[1];
+
+            if (x > D)
+                continue;
+
+            // 반복문 => 현재 위치에서 갈 수 있는 지름길이 있는지 확인하기
+            for (int[] shortcut : shortcutList) {
+                if (x == shortcut[0] && distance[shortcut[1]] > cost + shortcut[2]) {
+                    distance[shortcut[1]] = cost + shortcut[2];
+                    q.add(new int[] {shortcut[1], cost + shortcut[2]});
+                }
+            }
+            if (x + 1 > D)
+                continue;
+            if (distance[x + 1] > cost + 1) {
+                distance[x + 1] = cost + 1;
+                q.add(new int[] {x + 1, cost + 1});
+            }
+        }
+    }
+
+    static void distanceInit() {
+        for (int i = 0; i < distance.length; i++) {
+            distance[i] = Integer.MAX_VALUE;
         }
     }
 
@@ -70,7 +104,7 @@ public class Main {
                     flag = true;
                     break;
                 }
-                if (iArr[i] > D) {
+                if (iArr[1] > D) {
                     // 여기로 가면 안됨
                     flag = true;
                     break;
@@ -92,18 +126,7 @@ public class Main {
     }
 }
 
-// 이거 스위핑 인가? => 약간 그리디 느낌으로 하면 될거 같은데ㅔㅔㅔ
-// 이거 지름길이 길이를 넘어가면 안됨
-// 도로의 길이가 150 인데 지름길이 0 151 이면 갈 수 없음
-
 
 /*
-        문제 해결 프로세스
-    1. 지름길의 길이 순으로 정렬을 함 => (끝 - 시작) 대비 지름길의 길이가 더 큰 것이 앞에 오게 정렬을 해야함
-    1-1. 만약에 지름길의 길이가 같은게 있다면 시작이 더 작은 것으로 정렬을 함 => 이 것은 기본값이라서 별다른 설정을 할 필요 없음
-    2. 순서대로 지름길을 둔다.
-    3. 이 때, 이미 지름길로 간 길이라면 건너뛴다.
-    4. 끝!
-
-    12! => 4억 5천
+        다익스트라
  */

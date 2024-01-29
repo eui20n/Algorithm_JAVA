@@ -23,19 +23,36 @@ import java.io.InputStreamReader;
 
 public class Main {
     static int T;
-    static int[] arr = new int[10001];
+    static int[][] arr = new int[10001][4];
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         T = Integer.parseInt(br.readLine());
 
+        check();
+
         for (int i = 0; i < T; i++) {
             int n = Integer.parseInt(br.readLine());
-            System.out.println(arr[n]);
+            System.out.println(arr[n][1] + arr[n][2] + arr[n][3]);
         }
     }
 
-    static int makeDpTable() {
-        return 1;
+    static void check() {
+        arr[1][1] = 1;
+        arr[2][1] = 1;
+        arr[2][2] = 1;
+        arr[3][1] = 1;
+        arr[3][2] = 1;
+        arr[3][3] = 1;
+
+        makeDpTable();
+    }
+
+    static void makeDpTable() {
+        for (int i = 4; i < 10001; i++) {
+            arr[i][1] = arr[i - 1][1];
+            arr[i][2] = arr[i - 2][1] + arr[i - 2][2];
+            arr[i][3] = arr[i - 3][1] + arr[i - 3][2] + arr[i - 3][3];
+        }
     }
 }
 
