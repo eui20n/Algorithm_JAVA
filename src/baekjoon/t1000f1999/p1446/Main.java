@@ -18,7 +18,6 @@ import java.util.*;
 public class Main {
     static int N;
     static int D;
-    static List<int[]> shortcutList;
     static int[][] shortcutArr;
     static int[] distance = new int[10001]; // 각 배열의 위치는 현재 위치까지 오는데 걸리는 최소 시간
     public static void main(String[] args) throws IOException {
@@ -29,7 +28,6 @@ public class Main {
         D = Integer.parseInt(tmp[1]);
 
         shortcutArr = new int[N][3];
-        shortcutList = new ArrayList<>();
 
         for (int i = 0; i < N; i++) {
             shortcutArr[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
@@ -39,9 +37,6 @@ public class Main {
     }
 
     static void check() {
-        // 리스트 구해주기
-        makeList();
-
         // 가기
         go();
 
@@ -67,7 +62,7 @@ public class Main {
                 continue;
 
             // 반복문 => 현재 위치에서 갈 수 있는 지름길이 있는지 확인하기
-            for (int[] shortcut : shortcutList) {
+            for (int[] shortcut : shortcutArr) {
                 if (x == shortcut[0] && distance[shortcut[1]] > cost + shortcut[2]) {
                     distance[shortcut[1]] = cost + shortcut[2];
                     q.add(new int[] {shortcut[1], cost + shortcut[2]});
@@ -85,43 +80,6 @@ public class Main {
     static void distanceInit() {
         for (int i = 0; i < distance.length; i++) {
             distance[i] = Integer.MAX_VALUE;
-        }
-    }
-
-    static void makeList() {
-        // 중복되는 지름길 중, 짧은 것만 남기고 없애는 작업
-        for (int i = 0; i < N; i++) {
-            boolean flag = false;
-            for (int j = 0; j < N; j++) {
-                if (i == j)
-                    continue;
-
-                int[] iArr = shortcutArr[i];
-                int[] jArr = shortcutArr[j];
-
-                if (iArr[1] - iArr[0] <= iArr[2]) {
-                    // 지름길이 아님
-                    flag = true;
-                    break;
-                }
-                if (iArr[1] > D) {
-                    // 여기로 가면 안됨
-                    flag = true;
-                    break;
-                }
-                if (iArr[0] != jArr[0] || iArr[1] != jArr[1])
-                    continue;
-                if (iArr[2] > jArr[2]) {
-                    // 현재 길 (i)보다 더 짧은 지름길이 있다는 의미임
-                    flag = true;
-                    break;
-                }
-
-            }
-
-            if (!flag) {
-                shortcutList.add(shortcutArr[i]);
-            }
         }
     }
 }
