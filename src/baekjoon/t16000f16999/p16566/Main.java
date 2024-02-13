@@ -19,6 +19,8 @@ public class Main {
     static int N, M, K;
     static int[] cardNum;
     static int[] cardGame;
+    static int[] parent;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmpInput = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
@@ -26,24 +28,111 @@ public class Main {
         M = tmpInput[1];
         K = tmpInput[2];
 
-        cardNum = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        cardNum = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).sorted().toArray();
         cardGame = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+
+        parent = makeParent();
+
+        check();
+    }
+
+    static void check() {
+        StringBuilder sb = new StringBuilder();
+        for (int card : cardGame) {
+            int idx = binarySearch(card);
+            int putCard = find(cardNum[idx]);
+            sb.append(putCard).append("\n");
+            if (idx + 1 >= M)
+                continue;
+            union(putCard, putCard + 1);
+        }
+        System.out.println(sb);
+    }
+
+    static int find(int idx) {
+        /*
+            find 코드
+         */
+        if (parent[idx] == idx) {
+            // 부모를 찾으면 끝
+            return idx;
+        }
+        int p = find(parent[idx]);
+        parent[idx] = p;
+        return p;
+    }
+
+    static void union(int node_1, int node_2) {
+        /*
+            union 코드
+         */
+        int node_1_parent = find(node_1);
+        int node_2_parent = find(node_2);
+
+        if (node_1_parent < node_2_parent) {
+            parent[node_1_parent] = node_2_parent;
+        } else {
+            parent[node_2_parent] = node_1_parent;
+        }
+    }
+
+    static int binarySearch(int num) {
+        int start = 0;
+        int end = M;
+
+        while (true) {
+            if (start >= end)
+                break;
+
+            int mid = (start + end) / 2;
+            if (checkIdx(mid, num)) {
+                // 가능한 경우 해당 위치를 가지고 있어야함
+                // 줄여야함
+                end = mid;
+            } else {
+                // 불가능할 경우 해당 위치는 가지고 있을 필요가 없음
+                // 늘려야함
+                start = mid + 1;
+            }
+        }
+        return start;
+    }
+
+    static boolean checkIdx(int idx, int num) {
+        /*
+                해당 위치가 가능한지 알려주는 메소드
+                가능하면 true
+                불가능 하면 false
+
+                가능하다
+                => 인덱스에 해당하는 수보다 num이 더 작다
+
+                불가능 하다
+                => 인덱스에 해당하는 수보다 num이 더 크거나 같다
+         */
+        if (cardNum[idx] > num)
+            return true;
+        return false;
+    }
+
+    static int[] makeParent() {
+        int[] makeArr = new int[N + 1];
+
+        for (int i = 0; i < makeArr.length; i++) {
+            makeArr[i] = i;
+        }
+        return makeArr;
     }
 }
 
 /*
-    [방법 1.]
-    유니온 파인드
-    일단은 다 연결을 함
-    그리고 방문처리 배열을 하나만듬
-    그래서 값이 들어오면 그 값보다 딱 한 칸 위의 값을 보내줌
-    보내준 값을 방문처리해줌
-    즉, 방문 처리가 안된 값들 중 가장 작은 값들을 보내주면 됨
+    그냥 푸는 방법 => 완전 탐색을 해서 해당 카드보다 더 큰 선택이 안된 카드 고르기, 해당 카드는 중복해서 들어올 수 있음
 
-    [방법 2.]
-    이분 탐색
-    예를 들어 4라는 값이 들어오면 4와 가장 가까운 큰 수를 찾음
-    그래서 그 수를 출력해줌
-    근데, 만갸에 가장 가까운 수가 방문을 했으면, 그 다음 가까운 수를 출력
+    이분 탐색을 진행하기 전에 cardNum를 정렬해야함
 
+    유니온 파인드와 이분 탐색을 동시에 사용하는 문제
+    => 이분 탐색으로 들어갈 수 있는 위치를 찾기
+    => 유니온 파인드로 이분 탐색으로 찾은 위치에서 가장 가깝게 들어갈 수 있는 곳이 어딘지 찾기
+    => 유니온 파인드에서 union은 무조건 (자기 인덱스 + 1)와 하기
+    => 유니온 파인드는 오름차순 유니온 파인드
  */
