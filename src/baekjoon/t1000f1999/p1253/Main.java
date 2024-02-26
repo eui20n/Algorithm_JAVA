@@ -27,46 +27,66 @@ public class Main {
     }
 
     static void check() {
-        bruteForce();
-
-    }
-
-    static void bruteForce() {
         /*
-            일단은 완전 탐색으로 구현을 해보기
-            => 잘 모를때는 완전 탐색을 구현을 해보는 것이 좋음
-            => 그럼 구현 도중 혹은 다 완성이 되면 어떤 알고리즘을 통해서 시간이나 공간을 줄일 수 있는지 보이는 경우가 있음
+            두 수를 더하고, 그 값이 배열에 있는지 확인하면 됨
+            배열에 있는지 확인은 이분탐색을 통해서 할 것
          */
-        int result = 0;
-        for (int x = 0; x < arr.length; x++) {
-            int standardNum = arr[x];
-            find:
-            for (int i = 0; i < arr.length; i++) {
-                if (x == i)
-                    continue;
+        boolean[] checkNum = new boolean[N];
+        for (int i = 0; i < N; i++) {
+            for (int j = i + 1; j < N; j++) {
+                int num = arr[i] + arr[j];
+                int binaryIdx = binarySearch(num); // 이 수가 i와 j가 아닌지 확인해야함
 
-                int num1 = arr[i];
-                for (int j = 0; j < arr.length; j++) {
-                    if (x == j || i == j)
-                        continue;
-
-                    int num2 = arr[j];
-                    if (num1 + num2 == standardNum) {
-                        result += 1;
-                        break find;
-                    }
+                if (binaryIdx != i && binaryIdx != j && arr[binaryIdx] == num && !checkNum[binaryIdx]) {
+                    checkNum[binaryIdx] = true;
                 }
             }
         }
-        System.out.println(result);
+        System.out.println(sameNumCheck(checkNum));
+    }
+
+    static int sameNumCheck(boolean[] checkNum) {
+        int result = 0;
+        int num = Integer.MAX_VALUE;
+        for (int i = 0; i < checkNum.length; i++) {
+            if (checkNum[i]) {
+                // true면 최종값에 1씩 더해줌
+                num = arr[i];
+                result += 1;
+            } else if (!checkNum[i] && arr[i] == num) {
+                // false지만 바로 전에 해당 값일 경우 1씩 더해줌
+                result += 1;
+            }
+        }
+        return result;
+    }
+
+    static int binarySearch(int num) {
+        // num이 arr에 있는지 확인하기
+        int start = 0;
+        int end = N - 1;
+
+        while (true) {
+            if (start >= end)
+                return start;
+
+            int mid = (start + end) / 2;
+            int midNum = arr[mid];
+
+            if (midNum < num) {
+                start = mid + 1;
+            } else {
+                end = mid;
+            }
+        }
     }
 }
 
 /*
-        일단은 무슨 알고리즘을 써야할지 모르겠음
-        그럴 때는, 먼저 완전 탐색으로 구현을 해보기
-
-        이분 탐색...
-
-        어떤 수를 만들 수 있다면, 그 수와 같은 수는 자동으로 만들 수 있음
+        이분탐색
+        1. 반복문을 통해서 두 개의 수를 더함
+        2. 더한 수를 만들 수 있는지 이분탐색을 통해서 찾아봄
+        3. 이분탐색을 통해서 찾은 위치가 해당 수와 같다면 checkNum 해당 자리를 true
+        4. 반복을 전부 한 후, 본인 수가 true로 되어 있다면, 그와 같은 다른 수들도 true로 해주기
+        5. checkNum의 true의 갯수 출력
  */
