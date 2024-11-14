@@ -21,21 +21,13 @@ public class Main {
     static int[] result;
     static StringBuilder sb = new StringBuilder();
     static int[] closeTop;
-    static int[] distanceTop;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         topArr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
         result = new int[N];
-
         closeTop = new int[N];
-        distanceTop = new int[N];
-        for (int i = 0; i < N; i++) {
-            distanceTop[i] = 1000001;
-
-        }
-
         check();
     }
 
@@ -47,7 +39,7 @@ public class Main {
             if (result[i] == 0) {
                 sb.append(0).append("\n");
             } else {
-                sb.append(result[i]).append(" ").append(closeTop[i] + 1).append("\n");
+                sb.append(result[i]).append(" ").append(closeTop[i]).append("\n");
             }
         }
 
@@ -66,13 +58,6 @@ public class Main {
 
                 if (standard < comparison) {
                     lookTop[i] = j + 1;
-                    if (Math.abs(i - j) < distanceTop[i]) {
-                        // 지금 보는 탑이 더 가까운 경우
-                        distanceTop[i] = Math.abs(i - j);
-                        closeTop[i] = j;
-                    } else if (Math.abs(i - j) == distanceTop[i]) {
-                        closeTop[i] = Math.min(j, closeTop[i]);
-                    }
                     break;
                 }
             }
@@ -84,6 +69,7 @@ public class Main {
                 continue;
             }
 
+            closeTop[i] = lookTop[i];
             countArr[i] = countArr[idx] + 1;
         }
 
@@ -101,13 +87,6 @@ public class Main {
 
                 if (standard < comparison) {
                     lookTop[i] = j + 1;
-                    if (Math.abs(i - j) < distanceTop[i]) {
-                        // 지금 보는 탑이 더 가까운 경우
-                        distanceTop[i] = Math.abs(i - j);
-                        closeTop[i] = j;
-                    } else if (Math.abs(i - j) == distanceTop[i]) {
-                        closeTop[i] = Math.min(j, closeTop[i]);
-                    }
                     break;
                 }
             }
@@ -119,6 +98,11 @@ public class Main {
                 continue;
             }
 
+            if (Math.abs(closeTop[i] - i - 1) > Math.abs(lookTop[i] - i - 1)) {
+                closeTop[i] = lookTop[i];
+            } else if (Math.abs(closeTop[i] - i - 1) == Math.abs(lookTop[i] - i - 1)) {
+                closeTop[i] = Math.min(closeTop[i], lookTop[i]);
+            }
             countArr[i] = countArr[idx] + 1;
         }
 
@@ -137,4 +121,9 @@ public class Main {
     1. 이전에 것을 인덱스로 저장해서 사용하자(리스트 사용) => 시간초과
     2. 오른쪽, 왼쪽 총 2번의 연산을 한 번에 하자! => 시간초과... 한 번에 하니까 O(N^2)인 경우가 생김
     3. 1번에서 인덱스를 리스트에 넣는 것이 아니라, 가장 처음 보는 탑의 인덱스만 저장해서 이를 활용해서 갯수를 세자! => 정답
+
+    리팩토링
+    - 기존에 가장 가까운 탑을 구하는 로직이 내가 바라보는 탑을 구할 때, 같이 수행했음
+    -- 이 부분을 따로 수행하고, 여러개의 배열로 하던 것을 1개의 배열로 처리함
+    --- 이 결과는 메모리와 시간 복잡도가 조금 줄어들었고, 코드의 가독성이 올라감
  */
