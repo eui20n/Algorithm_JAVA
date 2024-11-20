@@ -31,59 +31,79 @@ public class Main {
     }
 
     static void check() {
-        /*
-                만들어야 하는 메소드
-            1. 탑 보는 메소드 => 완료
-            2. 사전순으로 가장 먼저 등장하는 탑의 모양
-         */
-
+        int[] arr = makeArr();
+        if (arr.length > N) {
+            System.out.println(-1);
+        } else {
+            result(arr);
+        }
     }
 
-    static void topShape() {
-        /*
-                사전순으로 가장 먼저 등장하는 것을 출력하는 것이기 때문에
-                시작 숫자는 1이 고정임 => 2가 될 수 없음 (기저 조건으로 활용)
-         */
+    static void result(int[] arr) {
+        int[] resultArr = new int[N];
+
+        for (int i = 0; i < arr.length; i++) {
+            if (i == 0 && leftWatch == 1) {
+                resultArr[i] = arr[i];
+            } else {
+                resultArr[N - arr.length + i] = arr[i];
+            }
+        }
+        for (int i = 0; i < resultArr.length; i++) {
+            if (resultArr[i] >= 1) {
+                continue;
+            }
+            resultArr[i] = 1;
+        }
+        printArr(resultArr);
     }
 
-    static boolean watchTop(int[] topArr) {
-        /*
-                일단은 for문 2개써서 만들고, 가능하면 나중에 합치기
-         */
-        int leftTopCnt = 0;
-        int rightTopCnt = 0;
+    static void printArr(int[] arr) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            sb
+                    .append(arr[i])
+                    .append(" ");
+        }
+        System.out.println(sb.toString());
+    }
 
-        // 왼쪽
-        int leftTop = 0;
-        for (int i = 0; i < N; i++) {
-            if (topArr[i] > leftTop) {
-                leftTopCnt += 1;
-                leftTop = topArr[i];
-            }
-        }
+    static int[] makeArr() {
+        int[] arr = new int[leftWatch + rightWatch - 1];
 
-        // 오른쪽
-        int rightTop = 0;
-        for (int i = N - 1; i >= 0; i--) {
-            if (rightTop == leftTop) {
-                // leftTop은 해당 배열에서 가장 큰 값임... 즉 rightTop과 leftTop이 같다는 것은 제일 큰 값이고, 더 이상 볼 수 있는 탑은 없음
-                break;
-            }
-            if (topArr[i] > rightTop) {
-                rightTopCnt += 1;
-                rightTop = topArr[i];
-            }
+        for (int i = 0; i < leftWatch; i++) {
+            arr[i] = i + 1;
         }
-        if (leftTopCnt == leftWatch && rightTopCnt == rightWatch) {
-            return true;
+        for (int i = 0; i < rightWatch; i++) {
+            arr[arr.length - i - 1] = i + 1;
         }
-        return false;
+        arr[leftWatch - 1] = Math.max(leftWatch, rightWatch);
+        return arr;
     }
 }
 
 /*
-        가희와 단비가 왼쪽, 오른쪽에 있다.
-        각각 탑을 보고 있다.
-        각가 보고있는 탑의 수와 총 탑의 개수가 주어질 때, 이 탑들은 높이를 사전순으로 가장 먼저 등장하는 것을 구해라.
-        각각 탑은 앞에 있는 것 보다 더 큰 탑만 볼 수 있다. 예를 들면 탑의 높이가 1 2 3 이라고 한다면, 가희는 3개, 단비는 1개 볼 수 있다.
+        핵심 로직
+
+        예를 들면 왼쪽에서 보는게 3, 오른쪽에서 보는게 2라면 아래처럼 만들어줌 => 배열의 길이가 5를 가정하고 있음
+        12311
+
+        저걸 만들어주는 로직이 무엇일까...
+        1. 왼쪽것을 만족하는 배열을 만들어줌
+        1-1. 예시를 3으로 했으니, 이를 만족하는 사전순으로 가장 먼저 있는 것은 123임
+        2. 앞에걸을 포함한 뒤에 것을 만족하는 배열을 만들어줌
+        2-1. 예시가 2니까, 123뒤에 붙을 것중 가장 사전순으로 먼저 올 수 있는 것은 12311임
+        3. 그럼 12311이 가장 뒤에 오는 것이고, 나머지는 배열의 길이에 맞게 앞에 1을 붙여주면 됨
+        3-1. 예를 들면 길이가 10이면 1111112311 이렇게 하면 됨
+        4. 해당 배열의 길이가 입력으로 주어진 배열의 길이보다 큰 경우 만들지 못하는 경우임
+        5. 완성할 수 있으면 완성 배열을, 완성 못하면 -1을 출력하면 됨
+ */
+
+/*
+        조합으로 모든 경우를 구해서 가지를 치는 것보다, 그냥 조건에 맞는 배열을 구하는 것이 더 쉬울듯 => 즉, 그리디 문제라는 소리
+        그리고 양쪽을 비교해서 더 큰쪽이 더 큰값을 가지게 하면 됨
+ */
+
+/*
+        조합으로 가장한 그리디 문제
  */
